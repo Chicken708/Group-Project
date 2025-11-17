@@ -28,4 +28,5 @@ Part1:
 python mountain_car.py --train --episodes 5000
 python mountain_car.py --render --episodes 10
 
-
+Part2:
+python frozen_lake.py
