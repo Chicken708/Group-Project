@@ -1,91 +1,58 @@
-# Group Project Setup Guide
+# 專案總覽
+本專案使用 Python 與 Gymnasium 建立一個 CartPole 強化學習代理人（Agent）。
+架構中定義了抽象的 Agent 類別，讓不同的策略（例如隨機策略、Q-learning）都能以統一流程運作。
 
-## Project Content
+## 專案內容
 - Gymnasium v1.2.2
-- Part1 Sample Code
-- Part2 Sample Code
-- Part3 Sample Code
+- Part1
+- Part2
+- Part3
   
-## Installation
+## 安裝依賴
 
 ```bash
-# 1. Create a virtual environment
+# 1. 建立虛擬環境
 python -m venv .venv
 
-# 2. Activate the virtual environment
+# 2. 啟用虛擬環境
 source .venv/bin/activate
 
-# 3. Navigate to the Gymnasium directory
+# 3. 到 Gymnasium  的目錄
 cd group_project/Gymnasium
 
-# 4. Install Gymnasium in editable mode
+# 4. 安裝 Gymnasium
 pip install -e .
 
-# 5. Install additional dependencies
+# 5. 安裝其他依賴
 pip install "gymnasium[classic_control]"
 pip install matplotlib
+pip install numpy
 ```
 
 ---
 
-## ✅ Verification
-
-Run the following command to verify that the installation is successful:
-
-```bash
-% pip list
-```
-
-Sample Output from MacOS:
-
-```
-Package              Version Editable project location
--------------------- ------- --------------------------------------------
-cloudpickle          3.1.2
-Farama-Notifications 0.0.4
-gymnasium            1.2.2   ./group_project/Gymnasium
-numpy                2.3.5
-pip                  24.3.1
-typing_extensions    4.15.0
-```
-
-If your output matches the above (or is similar), your environment is correctly configured.
-
----
-
-## 🚀 Running the Project
+## 執行
 
 ### **Part 1: Mountain Car**
-Train and test the reinforcement learning agent:
 
 ```bash
-# Train the agent
+# 訓練 Agent
 python mountain_car.py --train --episodes 5000
 
-# Render and visualize performance
+# 渲染與視覺化
 python mountain_car.py --render --episodes 10
 ```
 
 ### **Part 2: Frozen Lake**
-Run the Frozen Lake environment:
+執行 Frozen Lake 環境：
 
 ```bash
 python frozen_lake.py
 ```
 
-### **Part 3: OOP Project Environment**
-Execute the custom OOP environment:
+### **Part 3: CartPole**
+執行 CartPole 專案：
 
 ```bash
-python oop_project_env.py
-```
-
-**Tip:**  
-If you’re on Windows, replace  
-```bash
-source .venv/bin/activate
-```  
-with  
-```bash
-.venv\Scripts\activate
+python part3.py
 ```
