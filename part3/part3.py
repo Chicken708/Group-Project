@@ -1,5 +1,6 @@
 import abc
 from typing import List, Tuple
+import argparse
 
 import gymnasium as gym
 import numpy as np
@@ -436,41 +437,79 @@ def plot_rewards(
     print(f"Training curve saved to {filename}")
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="CartPole Q-learning / Random baseline")
+    parser.add_argument(
+        "--agent",
+        type=str,
+        choices=["qlearning", "random"],
+        default="qlearning",
+        help="選擇要使用的 agent：'qlearning' 或 'random'（預設：qlearning）",
+    )
+    parser.add_argument(
+        "--train-episodes",
+        type=int,
+        default=3000,
+        help="訓練集數（預設：3000）",
+    )
+    parser.add_argument(
+        "--eval-episodes",
+        type=int,
+        default=20,
+        help="評估集數（預設：20）",
+    )
+    parser.add_argument(
+        "--no-render",
+        action="store_true",
+        help="評估時不顯示畫面（預設會 render）",
+    )
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
+    args = parse_args()
+
     # 使用的環境 ID
     ENV_ID = "CartPole-v1"
 
-    # 建立離散化器，指定每一維的 bins 數量
+    # 建立離散化器，指定每一維的 bins 數量（只在 Q-learning 時會用到）
     discretizer = StateDiscretizer(n_bins=(6, 6, 12, 12))
 
     # 先建一個暫時的環境，為了讀取 action_space 資訊
     tmp_env = gym.make(ENV_ID)
     action_space = tmp_env.action_space  # 這裡在 CartPole 是 Discrete(2)
     tmp_env.close()
-    
-    # 學習
-    agent = QLearningCartPoleAgent(
-        action_space=action_space,
-        discretizer=discretizer,
-        learning_rate=0.1,      # Q-learning 的 α
-        discount_factor=0.99,   # 折扣因子 γ
-        epsilon_start=1.0,      # 一開始 epsilon=1.0，完全隨機探索
-        epsilon_min=0.05,       # 最低探索機率 5%
-        epsilon_decay=0.0005,   # 每一集 epsilon -= 0.0005
-    )
+
+    # 根據參數決定要用哪個 Agent
+    if args.agent == "random":
+        print("使用 RandomAgent（完全隨機 baseline，不會學習）")
+        agent = RandomAgent(action_space=action_space)
+    else:
+        print("使用 QLearningCartPoleAgent（會進行 Q-learning 訓練）")
+        agent = QLearningCartPoleAgent(
+            action_space=action_space,
+            discretizer=discretizer,
+            learning_rate=0.1,      # Q-learning 的 α
+            discount_factor=0.99,   # 折扣因子 γ
+            epsilon_start=1.0,      # 一開始 epsilon=1.0，完全隨機探索
+            epsilon_min=0.05,       # 最低探索機率 5%
+            epsilon_decay=0.0005,   # 每一集 epsilon -= 0.0005
+        )
 
     # 建立 Trainer，負責跑完整的訓練 / 評估流程
     trainer = Trainer(env_id=ENV_ID, agent=agent, max_steps_per_episode=500)
 
     # ========= 訓練階段 =========
-    train_episodes = 3000  # 訓練總集數
+    train_episodes = args.train_episodes
     training_rewards = trainer.train(num_episodes=train_episodes)
 
     # 畫出訓練過程的 reward 曲線
     plot_rewards(training_rewards, window=50, filename="cartpole_training.png")
 
     # ========= 評估階段 =========
-    # 評估時不再學習，只是用目前學到的 Q-table 做 greedy 行為
-    # 若 render=True，會跳出視覺畫面
-    eval_rewards = trainer.evaluate(num_episodes=20, render=True)
+    # 評估時不再學習，只是用目前的策略做行為
+    eval_rewards = trainer.evaluate(
+        num_episodes=args.eval_episodes,
+        render=not args.no_render,
+    )
     print(f"平均評估 reward = {np.mean(eval_rewards):.2f}")
