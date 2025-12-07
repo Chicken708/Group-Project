@@ -54,5 +54,12 @@ python frozen_lake.py
 執行 CartPole 專案：
 
 ```bash
+# 執行預設版本（Q-Learning）
 python part3.py
+
+# 指定執行 Q-Learning 版本
+python part3.py --agent qlearning
+
+# 指定執行 Random 版本（不做學習）
+python part3.py --agent random
 ```
