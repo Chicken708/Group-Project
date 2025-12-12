@@ -63,3 +63,10 @@ python part3.py --agent qlearning
 # 指定執行 Random 版本（不做學習）
 python part3.py --agent random
 ```
+---
+### **成員貢獻**
+| 成員 | 貢獻 |
+|------|------|
+| 鄧皓元  | 完成 part3 |
+| 黃瑋晟  | 完成 part2 及 UML 圖 |
+| 王皓渝  | 完成 Demo Slide |
